@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AgreeAndCloseButtonText" xml:space="preserve">
+    <value>同意して閉じる</value>
+  </data>
   <data name="AgreeBox.Content" xml:space="preserve">
     <value>私は上記のライセンス条項を熟読し，内容をよく吟味したうえでこのライセンス条項に同意します．</value>
     <comment>同意文．</comment>
@@ -124,5 +127,9 @@
   <data name="DescriptionBlock.Text" xml:space="preserve">
     <value>このアプリを利用するには，以下のライセンス条項をよくご確認いただき．このライセンス条項にご同意いただく必要がございます．以下に掲載されているライセンス条項をよくお読みいただき，ご同意になる場合には条項の下の同意ボタンにチェックを入れてください．</value>
     <comment>アプリの仕様前に表示されるライセンス同意画面の説明文．</comment>
+  </data>
+  <data name="DisagreeAndCloseText" xml:space="preserve">
+    <value>同意せずに閉じる</value>
+    <comment>アプリ終了ボタン．</comment>
   </data>
 </root>

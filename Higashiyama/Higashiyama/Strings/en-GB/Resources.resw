@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AgreeAndCloseButtonText" xml:space="preserve">
+    <value>Agree and Close</value>
+  </data>
   <data name="AgreeBox.Content" xml:space="preserve">
     <value>I have read the license terms carefully and agree with it.</value>
     <comment>Agreement terms.</comment>
@@ -124,5 +127,9 @@
   <data name="DescriptionBlock.Text" xml:space="preserve">
     <value>Thank you very much for installing Higashiyama. Before you will use it, you have to agree with the license terms following below with reading it carefully. If you can agree with the terms after reading it, please check the check box under the terms and click ‘Agree and Close’ button. Otherwise, please click the other one.</value>
     <comment>The description about the agreement dialog content.</comment>
+  </data>
+  <data name="DisagreeAndCloseText" xml:space="preserve">
+    <value>Disagree and Close</value>
+    <comment>Closing App.</comment>
   </data>
 </root>
