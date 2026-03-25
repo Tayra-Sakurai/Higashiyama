@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="Higashiyama.LicenseAgreementDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Higashiyama"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="16,12"
+          RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="DescriptionBlock" 
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextWrapping="WrapWholeWords"/>
+        <RichEditBox x:Name="SuperEditBox"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     Grid.Row="1"/>
+        <CheckBox x:Name="AgreeBox" x:Uid="AgreeBox" Grid.Row="2"/>
+    </Grid>
+</ContentDialog>
