@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -11,10 +13,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Takaragaike.Contexts;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,13 +32,28 @@ namespace Higashiyama
     {
         private Window? _window;
 
+        public IServiceProvider Services { get; private set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            Services = ConfigureService();
             InitializeComponent();
+        }
+
+        private static IServiceProvider ConfigureService()
+        {
+            ServiceCollection services = new();
+
+            string dbPath = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "OTPData.db");
+
+            services.AddDbContextFactory<TakaragaikeContext>(options =>
+            options.UseSqlite($"Data Source={dbPath}"));
+
+            return services.BuildServiceProvider();
         }
 
         /// <summary>
@@ -46,5 +65,7 @@ namespace Higashiyama
             _window = new MainWindow();
             _window.Activate();
         }
+
+        public static new App Current => (App)Application.Current;
     }
 }
