@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Takaragaike.Contexts;
+using Takaragaike.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -52,6 +53,8 @@ namespace Higashiyama
 
             services.AddDbContextFactory<TakaragaikeContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
+
+            services.AddSingleton<IDatabaseService<TakaragaikeContext>, TakaragaikeDatabaseService>();
 
             return services.BuildServiceProvider();
         }

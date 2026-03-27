@@ -10,7 +10,9 @@ namespace Takaragaike.Services
     /// <summary>
     /// Basic OATH-HOTP and OATH-TOTP URI parsing service interface to be implemented for URI parsing.
     /// </summary>
-    public interface IUriParserService
+    /// <typeparam name="TDataModel">The data type for the database which stores the data.</typeparam>
+    public interface IUriParserService<TDataModel>
+        where TDataModel : class, new()
     {
         /// <summary>
         /// Gets the TOTP or HOTP secret shared key as byte array.
@@ -86,5 +88,45 @@ namespace Takaragaike.Services
 
         /// <inheritdoc cref="GetTotpDuration(Uri)"/>
         static abstract TimeSpan GetTotpDuration(string uri);
+        
+        /// <summary>
+        /// Generates a data model to be saved onto the database.
+        /// </summary>
+        /// <param name="uri">The otpauth:// URI.</param>
+        /// <returns>The data model.</returns>
+        /// <exception cref="ArgumentNullException">When <paramref name="uri"/> is null.</exception>
+        /// <exception cref="ArgumentException">When <paramref name="uri"/> is not a valid otpauth:// URI.</exception>
+        static abstract TDataModel GetDataModel(Uri uri);
+
+        /// <inheritdoc cref="GetDataModel(Uri)"/>
+        static abstract TDataModel GetDataModel(string uri);
+
+        /// <summary>
+        /// Gets the digits of the OTP.
+        /// </summary>
+        /// <returns>The digits of the OTP.</returns>
+        /// <inheritdoc cref="GetDataModel(Uri)"/>
+        static abstract uint GetDigits(Uri uri);
+
+        /// <inheritdoc cref="GetDigits(Uri)"/>
+        static abstract uint GetDigits(string uri);
+
+        /// <summary>
+        /// Gets the algorithm name of the OTP.
+        /// </summary>
+        /// <returns>The algorithm identifier of the OTP generator.</returns>
+        /// <exception cref="InvalidOperationException">When the Uri is for HOTP.</exception>
+        /// <inheritdoc cref="GetDigits(Uri)"/>
+        static abstract HashAlgorithm GetAlgorithm(Uri uri);
+
+        /// <inheritdoc cref="GetAlgorithm(Uri)"/>
+        static abstract HashAlgorithm GetAlgorithm(string uri);
+
+        /// <summary>
+        /// Generates an otpauth:// URI from the data included by <paramref name="dataModel"/>.
+        /// </summary>
+        /// <param name="dataModel">The data model to include the OTP authentication data.</param>
+        /// <returns>The generated URI.</returns>
+        static abstract Uri GetUri(TDataModel dataModel);
     }
 }

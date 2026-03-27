@@ -16,5 +16,7 @@ namespace Takaragaike.Models
         public byte[] Counter { get; set; } = null;
         public int? Duration { get; set; } = null;
         public DateTime CreationTime { get; set; } = DateTime.UtcNow;
+        public HashAlgorithm Algorithm { get; set; } = HashAlgorithm.SHA1;
+        public int Digits { get; set; } = 6;
     }
 }
