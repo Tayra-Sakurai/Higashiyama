@@ -21,10 +21,10 @@ namespace Takaragaike.Services
         /// <returns>The byte array which represents the shared secret key.</returns>
         /// <exception cref="ArgumentNullException">When the URI is null.</exception>
         /// <exception cref="ArgumentException">When the URI is invalid.</exception>
-        static abstract byte[] GetKey(Uri uri);
+        static abstract byte[] GetSecretKey(Uri uri);
 
         /// <inheritdoc cref="GetKey(Uri)"/>
-        static abstract byte[] GetKey(string uri);
+        static abstract byte[] GetSecretKey(string uri);
 
         /// <summary>
         /// Gets the OTP type from the URI.

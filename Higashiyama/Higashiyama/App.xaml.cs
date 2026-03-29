@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Takaragaike.Contexts;
+using Takaragaike.Models;
 using Takaragaike.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;

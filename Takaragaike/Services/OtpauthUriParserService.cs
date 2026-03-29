@@ -49,7 +49,26 @@ namespace Takaragaike.Services
             return HttpUtility.ParseQueryString(query);
         }
 
-        public static byte[] GetKey(Uri uri)
+        private static string ToQueryString(NameValueCollection query)
+        {
+            string result = "?";
+
+            for (int i = 0; i < query.Count; i++)
+            {
+                string key = query.GetKey(i);
+                string value = query[i];
+
+                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                {
+                    result += key + "=" + HttpUtility.UrlEncode(value);
+                    continue;
+                }
+            }
+
+            return result;
+        }
+
+        public static byte[] GetSecretKey(Uri uri)
         {
             ArgumentNullException.ThrowIfNull(uri);
 
@@ -61,9 +80,9 @@ namespace Takaragaike.Services
             return ConverterExtensions.FromBase32String(queryCollection["secret"]);
         }
 
-        public static byte[] GetKey(string uri)
+        public static byte[] GetSecretKey(string uri)
         {
-            return GetKey(new Uri(uri));
+            return GetSecretKey(new Uri(uri));
         }
 
         public static byte[] GetInitialCounter(Uri uri)
@@ -210,6 +229,126 @@ namespace Takaragaike.Services
             ArgumentException.ThrowIfNullOrWhiteSpace(uri);
 
             return GetTotpDuration(new Uri(uri));
+        }
+
+        public static uint GetDigits(Uri uri)
+        {
+            ArgumentNullException.ThrowIfNull(uri);
+
+            if (IsOtpauthUri(uri))
+            {
+                // The query.
+                NameValueCollection query = ParseQuery(uri);
+
+                if (query["digits"] == null)
+                    return 6;
+
+                if (uint.TryParse(query["digits"], out uint dgt))
+                    return dgt;
+            }
+
+            throw new ArgumentException("Not a valid otpauth:// URI.", nameof(uri));
+        }
+
+        public static uint GetDigits(string uri)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(uri);
+
+            return GetDigits(new Uri(uri));
+        }
+
+        public static HashAlgorithm GetAlgorithm(Uri uri)
+        {
+            ArgumentNullException.ThrowIfNull(uri);
+
+            if (IsOtpauthUri(uri))
+            {
+                NameValueCollection query = ParseQuery(uri);
+
+                HashAlgorithm? algorithm = query["algorithm"] switch
+                {
+                    null => HashAlgorithm.SHA1,
+                    "SHA1" => HashAlgorithm.SHA1,
+                    "SHA256" => HashAlgorithm.SHA256,
+                    "SHA512" => HashAlgorithm.SHA512,
+                    _ => null
+                };
+
+                if (algorithm is HashAlgorithm hashAlgorithm)
+                    return hashAlgorithm;
+            }
+
+            throw new ArgumentException("Invalid otpauth:// URI.", nameof(uri));
+        }
+
+        public static HashAlgorithm GetAlgorithm(string uri)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(uri);
+
+            return GetAlgorithm(new Uri(uri));
+        }
+
+        public static OtpData GetDataModel(Uri uri)
+        {
+            ArgumentNullException.ThrowIfNull(uri);
+
+            if (IsOtpauthUri(uri))
+            {
+                OtpData result = new()
+                {
+                    Algorithm = GetAlgorithm(uri),
+                    CreationTime = DateTime.UtcNow,
+                    Digits = (int)GetDigits(uri),
+                    Issuer = GetIssuer(uri) ?? string.Empty,
+                    OtpType = GetOTPType(uri),
+                    SecretKey = GetSecretKey(uri),
+                    UserName = GetAccountName(uri) ?? string.Empty,
+                };
+
+                if (result.OtpType == OTPType.TOTP)
+                {
+                    result.Duration = (int)GetTotpDuration(uri).TotalSeconds;
+
+                    return result;
+                }
+
+                result.Counter = GetInitialCounter(uri);
+
+                return result;
+            }
+
+            throw new ArgumentException("Invalid otpauth:// URI.", nameof(uri));
+        }
+
+        public static OtpData GetDataModel(string uri)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(uri);
+
+            return GetDataModel(new Uri(uri));
+        }
+
+        public static Uri GetUri(OtpData dataModel)
+        {
+            ArgumentNullException.ThrowIfNull(dataModel);
+
+            UriBuilder builder = new()
+            {
+                Scheme = "otpauth",
+                Host = dataModel.OtpType.ToString().ToLower(),
+                Path = "/" + HttpUtility.UrlPathEncode(dataModel.Issuer + ":" + dataModel.UserName),
+            };
+
+            NameValueCollection queryCollection = new();
+
+            queryCollection["algorithm"] = dataModel.Algorithm.ToString();
+            queryCollection["secret"] = ConverterExtensions.ToBase32String(dataModel.SecretKey);
+            queryCollection["digits"] = dataModel.Digits.ToString();
+            queryCollection["period"] = dataModel.Duration?.ToString() ?? string.Empty;
+            queryCollection["counter"] = dataModel.Counter?.ToString() ?? string.Empty;
+
+            builder.Query = ToQueryString(queryCollection);
+
+            return builder.Uri;
         }
     }
 }

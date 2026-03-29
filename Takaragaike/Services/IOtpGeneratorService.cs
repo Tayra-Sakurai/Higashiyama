@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Takaragaike.Services
 {
-    public interface ITotpGeneratorService
+    public interface IOtpGeneratorService
     {
         /// <summary>
         /// Generates the OATH-TOTP based on the shared secret key.
